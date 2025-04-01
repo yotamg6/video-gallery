@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
         const uploadId = uuidv4();
         try {
           await setUploadStatus(uploadId, 1);
-          const filename = file.name;
-          const blob = await put(filename, file.stream(), {
+          const fileName = file.name;
+          const blob = await put(fileName, file.stream(), {
             access: "public",
           });
 
@@ -29,14 +29,25 @@ export async function POST(req: NextRequest) {
           const videoUrl = blob.url;
           const { thumbnailUrl, status } = await generateThumbnail(
             videoUrl,
-            filename
+            fileName
           );
 
           await setUploadStatus(uploadId, 3);
-          await saveVideoMetadata({ filename, videoUrl, thumbnailUrl, status });
+          await saveVideoMetadata({
+            filename: fileName,
+            videoUrl,
+            thumbnailUrl,
+            status,
+          });
 
           await setUploadStatus(uploadId, 4);
-          return { uploadId, videoUrl, thumbnailUrl, status };
+          return {
+            filename: fileName,
+            uploadId,
+            videoUrl,
+            thumbnailUrl,
+            status,
+          };
         } catch (error) {
           console.error("Upload error:", error);
           await setUploadStatus(uploadId, 0);

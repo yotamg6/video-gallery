@@ -1,0 +1,164 @@
+.uploadContainer {
+  padding: 1.5rem;
+  max-width: 42rem;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.uploadedSection {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.uploadedItem {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #d1fae5;
+  background-color: #ecfdf5;
+}
+
+.uploadSuccess {
+  color: #16a34a;
+}
+
+.uploadError {
+  color: #dc2626;
+}
+
+.link {
+  text-decoration: underline;
+}
+
+.uploadTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.uploadBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+  color: white;
+}
+
+.uploadBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+  color: white;
+}
+
+.uploadBtnActive {
+  background-color: #071bf2;
+  cursor: pointer;
+}
+
+.uploadBtnActive:hover {
+  background-color: #2c07d2; /* green-700 */
+}
+
+.uploadBtnDisabled {
+  background-color: #9ca3af; /* gray-400 */
+  cursor: not-allowed;
+}
+
+.videosSection {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.videoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.videoItem {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confirmationOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.confirmationBox {
+  padding: 1rem;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 0.375rem;
+  background-color: #d1c7fe; /* yellow-100 */
+  color: black;
+  font-size: 0.875rem; /* text-sm */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.confirmationActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.confirmBtn {
+  background-color: #3016a3;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.confirmBtn:hover {
+  background-color: #0e0ed5;
+}
+
+.confirmationHeader {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.confirmationText {
+  margin-bottom: 1rem;
+}
+
+.cancelBtn {
+  background-color: #d1d5db;
+  color: #111827;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  background-color: #9ca3af; /* gray-400 */
+}
