@@ -4,7 +4,6 @@ import { setUploadStatus } from "@/lib/utils/uploadStatus";
 import { generateThumbnail } from "@/lib/utils/video";
 import { put } from "@vercel/blob";
 import { NextRequest } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,12 +13,17 @@ export async function POST(req: NextRequest) {
       return new Response("Empty request", { status: 204 });
     }
 
+    const metadataRaw = formData.get("metadata") as string;
+    const metadata = JSON.parse(metadataRaw) as {
+      id: string;
+      filename: string;
+    }[];
+
     const results = await Promise.allSettled(
-      files.map(async (file) => {
-        const uploadId = file.name;
+      files.map(async (file, index) => {
+        const { id: uploadId, filename } = metadata[index];
         try {
           await setUploadStatus(uploadId, 1);
-          const filename = file.name;
           const blob = await put(filename, file.stream(), {
             access: "public",
           });

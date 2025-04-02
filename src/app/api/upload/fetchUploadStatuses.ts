@@ -14,11 +14,9 @@ export const fetchUploadStatuses = async ({
       .join("&");
     const url = `/api/status?${query}`;
 
-    console.log("Fetching upload statuses from:", url);
 
     const response = await axios.get(url);
 
-    console.log("Upload statuses response:", response.data);
 
     return response.data;
   } catch (error) {

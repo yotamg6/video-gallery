@@ -43,6 +43,15 @@ const VideoUpload = () => {
 
     const formData = new FormData();
     videos.forEach(({ id, file }) => formData.append("videos", file, id));
+    formData.append(
+      "metadata",
+      JSON.stringify(
+        videos.map(({ id, file }) => ({
+          id,
+          filename: file.name,
+        }))
+      )
+    );
 
     try {
       const res = await axios.post("/api/upload", formData, {
