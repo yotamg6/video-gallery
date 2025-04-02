@@ -4,7 +4,7 @@ export type UploadStatus = 0 | 1 | 2 | 3 | 4;
 
 export interface UploadResult {
   //TODO: should all this be optional;
-  fileName?: string;
+  filename?: string;
   uploadId?: string;
   videoUrl?: string;
   thumbnailUrl?: string;

@@ -16,11 +16,11 @@ export async function POST(req: NextRequest) {
 
     const results = await Promise.allSettled(
       files.map(async (file) => {
-        const uploadId = uuidv4();
+        const uploadId = file.name;
         try {
           await setUploadStatus(uploadId, 1);
-          const fileName = file.name;
-          const blob = await put(fileName, file.stream(), {
+          const filename = file.name;
+          const blob = await put(filename, file.stream(), {
             access: "public",
           });
 
@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
           const videoUrl = blob.url;
           const { thumbnailUrl, status } = await generateThumbnail(
             videoUrl,
-            fileName
+            filename
           );
 
           await setUploadStatus(uploadId, 3);
           await saveVideoMetadata({
-            filename: fileName,
+            filename,
             videoUrl,
             thumbnailUrl,
             status,
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
           await setUploadStatus(uploadId, 4);
           return {
-            filename: fileName,
+            filename,
             uploadId,
             videoUrl,
             thumbnailUrl,
