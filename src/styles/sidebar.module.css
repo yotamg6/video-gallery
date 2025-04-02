@@ -1,0 +1,15 @@
+.sidebarItem {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebarItem:hover {
+  background-color: #bbd9d8;
+}
+
+.sidebarText {
+  font-weight: 800;
+  color: #004d40;
+  letter-spacing: 1px;
+}

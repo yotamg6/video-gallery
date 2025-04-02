@@ -1,9 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import UploadIcon from "@mui/icons-material/Publish";
+
 import { VideoWithId } from "@/types/video";
 import Loader from "./Loader";
+import styles from "@/styles/uploader.module.css";
 
 type Props = {
   uploading: boolean;
@@ -41,14 +45,23 @@ const FilePicker = ({ uploading, setVideos, setShowConfirmation }: Props) => {
         onChange={handleChange}
         style={{ display: "none" }}
       />
-      <Button
-        variant="contained"
-        color="primary"
+      <IconButton
         onClick={handleClick}
+        className={styles.uploadBtnIcon}
         disabled={uploading}
+        sx={{
+          fontSize: "8rem",
+          // color: "#ff4081",
+          color: "#065244",
+          transition: "transform 0.2s ease",
+          "&:hover": {
+            transform: "scale(1.1)",
+            backgroundColor: "transparent",
+          },
+        }}
       >
-        {uploading ? <Loader /> : "Upload Videos"}
-      </Button>
+        {uploading ? <Loader /> : <CloudUploadIcon fontSize="inherit" />}
+      </IconButton>
     </>
   );
 };

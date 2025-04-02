@@ -8,11 +8,16 @@ import Popup from "./Popup";
 import FilePicker from "./FilePicker";
 import ResultsSection from "./ResultsSection";
 import ItemList from "./ItemList";
-import { Box, LinearProgress, Typography } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import usePolling from "@/app/hooks/usePolling";
 import { fetchUploadStatuses } from "@/app/api/upload/fetchUploadStatuses";
 import { MAX_UPLOAD_STATUS } from "@/lib/utils/constants";
-import { getProgressValue } from "@/lib/utils/general";
+import { Oswald } from "next/font/google";
+
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: "600",
+});
 
 const VideoUpload = () => {
   const [videos, setVideos] = useState<VideoWithId[]>([]);
@@ -74,15 +79,13 @@ const VideoUpload = () => {
         fetchUploadStatuses({ videoIds }).then(setUploadStatuses);
       }
     },
-    delay: 5000, // Poll every 5 seconds
+    delay: 5000,
     dependencies: [videos],
   });
 
   const getStateDisplay = (video: VideoWithId) => {
-    console.log("status for", video.id, "is", uploadStatuses[video.id]);
-
     const rawStatus = uploadStatuses[video.id];
-    const status: UploadStatus = typeof rawStatus === "number" ? rawStatus : 1; // default to 1 = "begin upload"
+    const status: UploadStatus = typeof rawStatus === "number" ? rawStatus : 1;
 
     if (status === 0) return "Failed";
 
@@ -99,7 +102,9 @@ const VideoUpload = () => {
 
   return (
     <div className={styles.uploadContainer}>
-      <h1 className={styles.uploadTitle}>Video Uploader</h1>
+      <h1 className={`${oswald.className} ${styles.uploadTitle}`}>
+        Video Uploader
+      </h1>
 
       <FilePicker
         uploading={uploading}
