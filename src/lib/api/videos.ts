@@ -1,5 +1,5 @@
 import { put } from "@vercel/blob";
-import { LAMBDA_THUMBNAIL_URL } from "./constants";
+import { LAMBDA_THUMBNAIL_URL } from "../utils/constants";
 
 export const generateThumbnail = async (
   videoUrl: string,
@@ -39,4 +39,12 @@ export const generateThumbnail = async (
       status: "processing", //TODO: should be "failed instead? or implement a retry logic?"
     };
   }
+};
+
+import { Video } from "@/types/video";
+
+export const fetchVideos = async (): Promise<Video[]> => {
+  const res = await fetch("/api/videos");
+  if (!res.ok) throw new Error("Failed to fetch videos");
+  return res.json();
 };

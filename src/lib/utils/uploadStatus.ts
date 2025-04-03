@@ -2,6 +2,8 @@ import { UploadStatus } from "@/types/video";
 import { redis } from "../db/redis";
 import { STATUS_PREFIX } from "./constants";
 
+//TODO: move this file to a better directory. api, or redis
+
 export const setUploadStatus = async (id: string, status: UploadStatus) => {
   await redis.set(`${STATUS_PREFIX}${id}`, status, { ex: 3600 });
 };

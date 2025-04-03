@@ -1,11 +1,15 @@
-import { saveVideoMetadata } from "@/lib/db/videos";
+import { getAllVideos, saveVideoMetadata } from "@/lib/db/videos";
 import { respondWithError } from "@/lib/utils/responses";
 import { setUploadStatus } from "@/lib/utils/uploadStatus";
-import { generateThumbnail } from "@/lib/utils/video";
+import { generateThumbnail } from "@/lib/api/videos";
 import { put } from "@vercel/blob";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export const config = {
+  runtime: "nodejs",
+};
+
+export const POST = async (req: NextRequest) => {
   try {
     const formData = await req.formData();
     const files = formData.getAll("videos") as File[];
@@ -68,4 +72,14 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return respondWithError();
   }
-}
+};
+
+export const GET = async () => {
+  try {
+    const videos = await getAllVideos();
+    return NextResponse.json(videos); //TODO: should this reponse by next also be applied to the other api functions?
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    return new NextResponse("Failed to fetch videos", { status: 500 });
+  }
+};

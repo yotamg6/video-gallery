@@ -1,7 +1,9 @@
-// lib/db/videos.ts
 import { prisma } from "@/lib/prisma";
+import { OrderBy } from "@/types/video";
 
-export async function saveVideoMetadata({
+//TODO: add try acatch to all functions?
+
+export const saveVideoMetadata = async ({
   filename,
   videoUrl,
   thumbnailUrl,
@@ -11,8 +13,9 @@ export async function saveVideoMetadata({
   videoUrl: string;
   thumbnailUrl: string;
   status: string;
-}) {
+}) => {
   return prisma.video.create({
+    //TODO: should it be awaited?
     data: {
       filename,
       videoUrl,
@@ -20,4 +23,13 @@ export async function saveVideoMetadata({
       status,
     },
   });
-}
+};
+
+export const getAllVideos = async (
+  sortKey: string = "createdAt",
+  sortOrder: OrderBy = "desc"
+) => {
+  return await prisma.video.findMany({
+    orderBy: { [sortKey]: sortOrder },
+  });
+};

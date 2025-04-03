@@ -6,13 +6,10 @@ import {
   List,
   ListItem,
   ListItemText,
-  LinearProgress,
   SxProps,
   Theme,
 } from "@mui/material";
 import { JSX } from "react";
-
-type RenderState = string | JSX.Element;
 
 interface ItemListProps<T> {
   title: string;
@@ -40,7 +37,7 @@ const ItemList = <T,>({
 
   return (
     <Box sx={styles.wrapper}>
-      <Typography variant="h6" sx={styles.title}>
+      <Typography variant="h6" sx={styles.title} textAlign={"center"}>
         {title}
       </Typography>
       <List sx={styles.list}>
@@ -48,15 +45,10 @@ const ItemList = <T,>({
           <ListItem
             key={getKey(item)}
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingLeft: 0,
-              paddingRight: 0,
               ...styles.listItem,
             }}
           >
-            <ListItemText primary={getLabel(item)} />
+            <ListItemText primary={getLabel(item)} sx={{ paddingRight: 2 }} />
             {getStateDisplay && (
               <Box sx={{ minWidth: 100, textAlign: "right" }}>
                 {getStateDisplay(item)}

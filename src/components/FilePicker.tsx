@@ -51,7 +51,6 @@ const FilePicker = ({ uploading, setVideos, setShowConfirmation }: Props) => {
         disabled={uploading}
         sx={{
           fontSize: "8rem",
-          // color: "#ff4081",
           color: "#065244",
           transition: "transform 0.2s ease",
           "&:hover": {

@@ -17,3 +17,14 @@ export type VideoWithId = {
   id: string;
   file: File;
 };
+
+export type OrderBy = "asc" | "desc";
+
+export interface Video {
+  id: string;
+  filename: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  status: string;
+  createdAt: string;
+}
