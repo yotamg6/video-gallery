@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchVideos } from "@/lib/api/videos";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -20,9 +20,6 @@ import MessageCard from "./MessageCard";
 import { formatBytesToMB } from "@/lib/utils/format";
 import LoaderWithMessage from "./LoaderWithMessage";
 
-//TODO: add f"etching your videos along with/ instead of the loader"
-//TODO: do we need some caching mechanism here?
-//TODO: Fallback message in the caroussel, in case file is not read?
 //TODO: if time, see how to reuse css's
 
 const oswald = Oswald({
@@ -33,6 +30,7 @@ const oswald = Oswald({
 const Gallery = () => {
   const [open, setOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoRecord | null>(null);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   const {
     data: videos = [],
@@ -68,7 +66,11 @@ const Gallery = () => {
           message="No Videos Yet"
         />
       ) : isError ? (
-        <MessageCard message="Failed to load videos" />
+        <MessageCard
+          message="Failed to load videos"
+          severity="error"
+          size="large"
+        />
       ) : (
         <div className={styles.carouselWrapper}>
           <Swiper
@@ -79,25 +81,39 @@ const Gallery = () => {
           >
             {videos.map((video) => (
               <SwiperSlide key={video.id}>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  height={340}
-                  sx={{ cursor: "pointer" }}
-                >
-                  <Image
-                    src={video.thumbnailUrl}
-                    alt={video.filename}
-                    width={480}
-                    height={270}
-                    className={styles.thumbnail}
-                    onClick={() => handleThumbnailClick(video)}
+                {imageErrors[video.id] ? (
+                  <MessageCard
+                    message="Thumbnail not available" //TODO: this is rendered outside the arrows. See with Claude
+                    mode="inline"
+                    size="small"
                   />
-                  <Typography className={styles.fileName}>
-                    {video.filename}
-                  </Typography>
-                </Box>
+                ) : (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    height={340}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <Image
+                      src={video.thumbnailUrl}
+                      alt={video.filename}
+                      width={480}
+                      height={270}
+                      className={styles.thumbnail}
+                      onClick={() => handleThumbnailClick(video)}
+                      onError={() =>
+                        setImageErrors((prev) => ({
+                          ...prev,
+                          [video.id]: true,
+                        }))
+                      }
+                    />
+                    <Typography className={styles.fileName}>
+                      {video.filename}
+                    </Typography>
+                  </Box>
+                )}
               </SwiperSlide>
             ))}
           </Swiper>

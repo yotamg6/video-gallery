@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 import axios from "axios";
 import { UploadResult, UploadStatus, VideoWithId } from "@/types/video";
 import styles from "@/styles/uploader.module.css";
@@ -19,6 +19,13 @@ import usePolling from "@/app/hooks/usePolling";
 import { fetchUploadStatuses } from "@/app/api/videos/fetchUploadStatuses";
 import { MAX_UPLOAD_STATUS } from "@/lib/utils/constants";
 import { Oswald } from "next/font/google";
+import { usePreventNavigation } from "@/app/hooks/usePreventNavigation";
+
+declare global {
+  interface Window {
+    __UPLOAD_IN_PROGRESS__?: boolean;
+  }
+}
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -41,6 +48,8 @@ const VideoUpload = () => {
     "error"
   );
   const [showProgressBar, setShowProgressBar] = useState(false);
+
+  usePreventNavigation(uploading);
 
   const handleResultsClose = () => {
     setResults([]);
@@ -68,6 +77,7 @@ const VideoUpload = () => {
   };
 
   const handleUpload = async () => {
+    //Function to customHook
     if (!videos.length) return;
 
     const totalSelectedSize = videos.reduce(

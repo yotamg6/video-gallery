@@ -2,6 +2,7 @@
   padding: 1rem 1.5rem;
   border-radius: 8px;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .sidebarItem:hover {
