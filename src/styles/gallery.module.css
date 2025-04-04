@@ -36,7 +36,7 @@
   pointer-events: none;
 }
 
-.title {
+.fileName {
   max-width: 480px;
   overflow: hidden;
   white-space: nowrap;
@@ -48,4 +48,14 @@
   background-color: #bbd9d8;
   border-radius: 6px;
   margin-top: 0.75rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  background: linear-gradient(135deg, #5e8e85 0%, #2e5d54 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
 }
