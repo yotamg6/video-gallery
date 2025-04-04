@@ -20,5 +20,7 @@ model Video {
   thumbnailUrl  String
   status        String   // e.g. "processing", "done", "failed"
   createdAt     DateTime @default(now())
+  fileSize      Int // In bytes
 }
+
 

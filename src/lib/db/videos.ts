@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { OrderBy } from "@/types/video";
+import { OrderBy, VideoUpload } from "@/types/video";
 
 //TODO: add try acatch to all functions?
 
@@ -8,28 +8,34 @@ export const saveVideoMetadata = async ({
   videoUrl,
   thumbnailUrl,
   status,
-}: {
-  filename: string;
-  videoUrl: string;
-  thumbnailUrl: string;
-  status: string;
-}) => {
-  return prisma.video.create({
-    //TODO: should it be awaited?
-    data: {
-      filename,
-      videoUrl,
-      thumbnailUrl,
-      status,
-    },
-  });
+  fileSize,
+}: VideoUpload) => {
+  try {
+    return await prisma.video.create({
+      data: {
+        filename,
+        videoUrl,
+        thumbnailUrl,
+        status,
+        fileSize,
+      },
+    });
+  } catch (e) {
+    console.log("failed to create video:", e);
+    throw new Error("Error creating video entry");
+  }
 };
 
 export const getAllVideos = async (
   sortKey: string = "createdAt",
   sortOrder: OrderBy = "desc"
 ) => {
-  return await prisma.video.findMany({
-    orderBy: { [sortKey]: sortOrder },
-  });
+  try {
+    return await prisma.video.findMany({
+      orderBy: { [sortKey]: sortOrder },
+    });
+  } catch (e) {
+    console.log("Failed to get videos", e);
+    throw new Error("Error getting videos");
+  }
 };

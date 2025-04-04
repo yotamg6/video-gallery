@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { RefObject, useRef } from "react";
 import { Button, IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import UploadIcon from "@mui/icons-material/Publish";
@@ -9,20 +9,28 @@ import { VideoWithId } from "@/types/video";
 import Loader from "./Loader";
 import styles from "@/styles/uploader.module.css";
 
-type Props = {
+type FilePickerProps = {
   uploading: boolean;
   setVideos: (cb: (prev: VideoWithId[]) => VideoWithId[]) => void;
   setShowConfirmation: (val: boolean) => void;
+  handleFilePickerClick: (
+    fileInputRef: RefObject<HTMLInputElement | null>
+  ) => void;
 };
 
-const FilePicker = ({ uploading, setVideos, setShowConfirmation }: Props) => {
+const FilePicker = ({
+  uploading,
+  setVideos,
+  setShowConfirmation,
+  handleFilePickerClick,
+}: FilePickerProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = () => {
-    if (!uploading && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
+  // const handleClick = () => {
+  //   if (!uploading && fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []).map((file) => ({
@@ -46,7 +54,7 @@ const FilePicker = ({ uploading, setVideos, setShowConfirmation }: Props) => {
         style={{ display: "none" }}
       />
       <IconButton
-        onClick={handleClick}
+        onClick={() => handleFilePickerClick(fileInputRef)}
         className={styles.uploadBtnIcon}
         disabled={uploading}
         sx={{

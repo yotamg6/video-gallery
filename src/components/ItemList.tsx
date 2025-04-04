@@ -33,8 +33,6 @@ const ItemList = <T,>({
   getStateDisplay,
   styles = {},
 }: ItemListProps<T>) => {
-  if (!items.length) return null;
-
   return (
     <Box sx={styles.wrapper}>
       <Typography variant="h6" sx={styles.title} textAlign={"center"}>

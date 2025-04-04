@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { RefObject, useState } from "react";
 import axios from "axios";
 import { UploadResult, UploadStatus, VideoWithId } from "@/types/video";
 import styles from "@/styles/uploader.module.css";
@@ -8,7 +8,13 @@ import Popup from "./Popup";
 import FilePicker from "./FilePicker";
 import ResultsSection from "./ResultsSection";
 import ItemList from "./ItemList";
-import { Box, LinearProgress, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  LinearProgress,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import usePolling from "@/app/hooks/usePolling";
 import { fetchUploadStatuses } from "@/app/api/videos/fetchUploadStatuses";
 import { MAX_UPLOAD_STATUS } from "@/lib/utils/constants";
@@ -29,6 +35,12 @@ const VideoUpload = () => {
   >({});
   const [uploadStarted, setUploadStarted] = useState(false); //TODO: check this
   const [showResults, setShowResults] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "error"
+  );
+  const [showProgressBar, setShowProgressBar] = useState(false);
 
   const handleResultsClose = () => {
     setResults([]);
@@ -46,9 +58,41 @@ const VideoUpload = () => {
     await handleUpload();
   };
 
+  const handleFilePickerClick = (
+    fileInputRef: RefObject<HTMLInputElement | null>
+  ) => {
+    setShowResults(false);
+    if (!uploading && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleUpload = async () => {
-    //TODO: remove to customHook. setVideos will probably move there as well. if doing so, might want to use useMutation by react query
     if (!videos.length) return;
+
+    const totalSelectedSize = videos.reduce(
+      (sum, video) => sum + video.file.size,
+      0
+    );
+
+    try {
+      const res = await fetch("/api/db/neon-storage");
+      const { canUpload, totalUsed, limit } = await res.json();
+
+      const projectedTotal = totalUsed + totalSelectedSize;
+
+      if (!canUpload || projectedTotal > limit) {
+        setSnackbarMessage(
+          "Upload blocked: Total file size exceeds your storage limit."
+        );
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        return;
+      }
+    } catch (err) {
+      console.error("Storage check failed", err);
+    }
+    setShowProgressBar(true);
     setUploading(true);
 
     const formData = new FormData();
@@ -65,15 +109,19 @@ const VideoUpload = () => {
 
     try {
       const res = await axios.post("/api/videos", formData, {
-        // TODO: remove to a designated api calls folder?
         headers: { "Content-Type": "multipart/form-data" },
       });
-      // if (results.length) {
+
       setResults(res.data);
       setShowResults(true);
-      // }
+      setSnackbarMessage("Videos uploaded successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (err) {
       console.error("Upload failed", err);
+      setSnackbarMessage("Upload failed. Please try again.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     } finally {
       setUploading(false);
       setVideos([]);
@@ -123,23 +171,6 @@ const VideoUpload = () => {
     );
   };
 
-  // useEffect(() => {
-  //   //TODO: remove
-  //   // Dummy data for preview
-  //   setVideos([
-  //     { id: "1", file: new File(["dummy"], "video1.mp4") },
-  //     { id: "2", file: new File(["dummy"], "video2.mp4") },
-  //     { id: "3", file: new File(["dummy"], "video3.mp4") },
-  //   ]);
-
-  //   setUploadStatuses({
-  //     "0": 0,
-  //     "1": 1,
-  //     "2": 2,
-  //     "4": 4,
-  //   });
-  // }, []);
-
   return (
     <div className={styles.uploadContainer}>
       <h1 className={`${oswald.className} ${styles.uploadTitle}`}>
@@ -150,28 +181,31 @@ const VideoUpload = () => {
         uploading={uploading}
         setVideos={setVideos}
         setShowConfirmation={setShowConfirmation}
+        handleFilePickerClick={handleFilePickerClick}
       />
 
-      <ItemList<VideoWithId>
-        title="Selected Videos"
-        items={videos}
-        getKey={(video) => video.id}
-        getLabel={(video) => video.file.name}
-        getStateDisplay={getStateDisplay}
-        styles={{
-          wrapper: { mt: 4 },
-          title: { fontWeight: 600, color: "#004d40" },
-          list: { padding: 0 },
-          listItem: {
-            border: "1px solid #ccc", // clearer border
-            borderRadius: "8px",
-            mt: 1,
-            py: 1.5,
-            px: 1,
-            backgroundColor: "#f9f9f9",
-          },
-        }}
-      />
+      {videos.length > 0 && showProgressBar && (
+        <ItemList<VideoWithId>
+          title="Selected Videos"
+          items={videos}
+          getKey={(video) => video.id}
+          getLabel={(video) => video.file.name}
+          getStateDisplay={getStateDisplay}
+          styles={{
+            wrapper: { mt: 4 },
+            title: { fontWeight: 600, color: "#004d40" },
+            list: { padding: 0 },
+            listItem: {
+              border: "1px solid #ccc", // clearer border
+              borderRadius: "8px",
+              mt: 1,
+              py: 1.5,
+              px: 1,
+              backgroundColor: "#f9f9f9",
+            },
+          }}
+        />
+      )}
 
       {showResults && (
         <ResultsSection
@@ -188,6 +222,28 @@ const VideoUpload = () => {
           handleCancelClick={handleCancelClick}
         />
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{
+            backgroundColor:
+              snackbarSeverity === "error" ? "#ffebee" : "#e0f2f1",
+            color: "#004d40",
+            border: `1px solid ${
+              snackbarSeverity === "error" ? "#f44336" : "#004d40"
+            }`,
+            fontWeight: 600,
+          }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

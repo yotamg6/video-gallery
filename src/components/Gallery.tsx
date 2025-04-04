@@ -21,15 +21,15 @@ import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import "swiper/css";
 import "swiper/css/navigation";
 import styles from "@/styles/gallery.module.css";
-import { Video } from "@/types/video";
+import { VideoRecord } from "@/types/video";
 
-//TODO: add f"etching your videos"
+//TODO: add f"etching your videos along with/ instead of the loader"
 //TODO: do we need some caching mechanism here?
 //TODO: Fallback message in the caroussel, in case file is not read?
 
 const Gallery = () => {
   const [open, setOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<VideoRecord | null>(null);
 
   const {
     data: videos = [],
@@ -110,7 +110,7 @@ const Gallery = () => {
     );
   }
 
-  const handleThumbnailClick = (video: Video) => {
+  const handleThumbnailClick = (video: VideoRecord) => {
     setSelectedVideo(video);
     setOpen(true);
   };
@@ -135,7 +135,6 @@ const Gallery = () => {
               flexDirection="column"
               alignItems="center"
               height={340}
-              onClick={() => handleThumbnailClick(video)} //TODO: if first or last image, video opens
               sx={{ cursor: "pointer" }}
             >
               <Image
@@ -144,6 +143,7 @@ const Gallery = () => {
                 width={480}
                 height={270}
                 className={styles.thumbnail}
+                onClick={() => handleThumbnailClick(video)}
               />
               <Typography className={styles.title}>{video.filename}</Typography>
             </Box>

@@ -51,7 +51,6 @@ const ResultsSection = ({
   results,
   handleResultsClose,
 }: ResultsSectionProps) => {
-  console.log("results in results section", results);
   return (
     <Card sx={{ mt: 4 }}>
       <CardContent className={styles.card} sx={{ padding: 0 }}>

@@ -46,6 +46,7 @@ export const POST = async (req: NextRequest) => {
             videoUrl,
             thumbnailUrl,
             status,
+            fileSize: file.size,
           });
 
           await setUploadStatus(uploadId, 4);

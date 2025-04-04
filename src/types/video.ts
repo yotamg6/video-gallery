@@ -20,11 +20,20 @@ export type VideoWithId = {
 
 export type OrderBy = "asc" | "desc";
 
-export interface Video {
+export interface VideoUpload {
+  filename: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  status: string;
+  fileSize: number;
+}
+
+export interface VideoRecord {
   id: string;
   filename: string;
   videoUrl: string;
   thumbnailUrl: string;
   status: string;
   createdAt: string;
+  fileSize: number;
 }
