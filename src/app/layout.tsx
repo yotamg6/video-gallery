@@ -33,13 +33,26 @@ const RootLayout = ({ children }: RootLayoutProps) => {
             sx={{
               display: "flex",
               minHeight: "100vh",
-              backgroundImage:
-                "linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('cameras.jpeg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
+              position: "relative",
+              width: "100%",
             }}
           >
+            {/* Background layer */}
+            <Box
+              sx={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundImage:
+                  "linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('cameras.jpeg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                zIndex: -1,
+              }}
+            />
             <Drawer
               variant="permanent"
               sx={{

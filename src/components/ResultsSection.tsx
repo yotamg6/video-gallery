@@ -3,12 +3,8 @@
 import { UploadResult } from "@/types/video";
 import {
   Typography,
-  List,
   ListItem,
-  ListItemText,
-  Link as MuiLink,
   Alert,
-  Paper,
   IconButton,
   Card,
   CardContent,
@@ -20,28 +16,6 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import styles from "@/styles/results.module.css";
 
-// const dummyResults = [
-//   //TODO: remove
-//   {
-//     uploadId: "1",
-//     filename: "my_cat_video.mp4",
-//     videoUrl: "https://example.com/video1",
-//     error: null,
-//   },
-//   {
-//     uploadId: "2",
-//     filename: "my_dog_video.mp4",
-//     videoUrl: "https://example.com/video2",
-//     error: "Network error",
-//   },
-//   {
-//     uploadId: "3",
-//     filename: "vacation_clip.mov",
-//     videoUrl: "https://example.com/video3",
-//     error: null,
-//   },
-// ];
-
 interface ResultsSectionProps {
   results: UploadResult[];
   handleResultsClose: () => void;
@@ -51,6 +25,8 @@ const ResultsSection = ({
   results,
   handleResultsClose,
 }: ResultsSectionProps) => {
+  const isGrid = results.length >= 3;
+
   return (
     <Card sx={{ mt: 4 }}>
       <CardContent className={styles.card} sx={{ padding: 0 }}>
@@ -66,18 +42,30 @@ const ResultsSection = ({
             Uploaded Videos
           </Typography>
         </Box>
-        {/* TODO: shold it be grid instead? */}
-        <List>
+        <Box
+          sx={{
+            display: isGrid ? "grid" : "flex",
+            flexDirection: isGrid ? undefined : "column",
+            gridTemplateColumns: isGrid
+              ? {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                }
+              : undefined,
+            gap: 2,
+            padding: 2,
+          }}
+        >
           {results.map((res) => (
             <ListItem
               key={res.uploadId}
               sx={{
-                p: 2,
-                width: "90%",
-                margin: "12px auto",
+                display: "flex",
+                flexDirection: "column",
                 border: "1px solid #e0e0e0",
                 borderRadius: "12px",
-                backgroundColor: res.error ? "#fff5f5" : "#f7fcfa",
+                backgroundColor: res.error ? "#fff5f5" : "#f1f6ff",
                 boxShadow: res.error
                   ? "0 1px 4px rgba(0, 0, 0, 0.04)"
                   : "inset 0 2px 40px rgba(0, 150, 136, 0.1)",
@@ -95,10 +83,11 @@ const ResultsSection = ({
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column", //TODO: check with Claude why when row, theres a huge gap on the right
+                    flexDirection: "column",
                     gap: 2,
                     width: "100%",
                     textAlign: "center",
+                    alignItems: "center",
                   }}
                 >
                   <CheckCircleOutlineIcon color="success" />
@@ -114,7 +103,8 @@ const ResultsSection = ({
               )}
             </ListItem>
           ))}
-        </List>
+        </Box>
+
         <Box mt={2} textAlign="center">
           <Link href="/">
             <Button variant="contained" sx={{ backgroundColor: "#004d40" }}>

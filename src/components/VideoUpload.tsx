@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useState } from "react";
 import axios from "axios";
 import { UploadResult, UploadStatus, VideoWithId } from "@/types/video";
 import styles from "@/styles/uploader.module.css";
@@ -214,7 +214,7 @@ const VideoUpload = () => {
             title: { fontWeight: 600, color: "#004d40" },
             list: { padding: 0 },
             listItem: {
-              border: "1px solid #ccc", // clearer border
+              border: "1px solid #ccc",
               borderRadius: "8px",
               mt: 1,
               py: 1.5,

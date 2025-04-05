@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ["3hiot6pk7tt7guzu.public.blob.vercel-storage.com"],
+    domains: ["3hiot6pk7tt7guzu.public.blob.vercel-storage.com"], // TODO: should be remotePatterns instead?
   },
 };
 

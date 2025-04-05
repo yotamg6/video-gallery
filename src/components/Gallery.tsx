@@ -1,15 +1,12 @@
 "use client";
-
 import { useQuery } from "@tanstack/react-query";
 import { fetchVideos } from "@/lib/api/videos";
-import { Box, Typography } from "@mui/material";
-import Image from "next/image";
+import { Box, Typography, IconButton } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import styles from "@/styles/gallery.module.css";
@@ -19,8 +16,7 @@ import MessageWithCTA from "./MessageWithCTA";
 import MessageCard from "./MessageCard";
 import { formatBytesToMB } from "@/lib/utils/format";
 import LoaderWithMessage from "./LoaderWithMessage";
-
-//TODO: if time, see how to reuse css's
+import VideoThumbnail from "./VideoThumbnail";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -30,7 +26,7 @@ const oswald = Oswald({
 const Gallery = () => {
   const [open, setOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoRecord | null>(null);
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const {
     data: videos = [],
@@ -41,7 +37,7 @@ const Gallery = () => {
     queryFn: fetchVideos,
   });
 
-  const handleThumbnailClick = (video: VideoRecord) => {
+  const handleOpenDialog = (video: VideoRecord) => {
     setSelectedVideo(video);
     setOpen(true);
   };
@@ -52,7 +48,6 @@ const Gallery = () => {
   };
 
   return (
-    //TODO: perhaps this should be a mapper instead of the optionalities
     <div>
       <h1 className={`${oswald.className} ${styles.pageTitle}`}>Gallery</h1>
       {isLoading ? (
@@ -60,7 +55,7 @@ const Gallery = () => {
       ) : !videos.length ? (
         <MessageWithCTA
           targetComponentName="Video Upload"
-          ctaFirstText="You haven’t uploaded any videos yet. Head over to the"
+          ctaFirstText="You haven't uploaded any videos yet. Head over to the"
           ctaSecondText="page and share your first video!"
           ctaLinkHref="/uploader"
           message="No Videos Yet"
@@ -78,45 +73,25 @@ const Gallery = () => {
             navigation
             spaceBetween={20}
             slidesPerView={1}
+            onSlideChange={(swiper) => setActiveSlide(swiper.activeIndex)}
           >
-            {videos.map((video) => (
+            {videos.map((video, index) => (
               <SwiperSlide key={video.id}>
-                {imageErrors[video.id] ? (
-                  <MessageCard
-                    message="Thumbnail not available" //TODO: this is rendered outside the arrows. See with Claude
-                    mode="inline"
-                    size="small"
+                <Box display="flex" flexDirection="column" alignItems="center">
+                  <VideoThumbnail
+                    video={video}
+                    openDialog={handleOpenDialog}
+                    activeSlide={activeSlide}
+                    slideIndex={index}
                   />
-                ) : (
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    height={340}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <Image
-                      src={video.thumbnailUrl}
-                      alt={video.filename}
-                      width={480}
-                      height={270}
-                      className={styles.thumbnail}
-                      onClick={() => handleThumbnailClick(video)}
-                      onError={() =>
-                        setImageErrors((prev) => ({
-                          ...prev,
-                          [video.id]: true,
-                        }))
-                      }
-                    />
-                    <Typography className={styles.fileName}>
-                      {video.filename}
-                    </Typography>
-                  </Box>
-                )}
+                  <Typography className={styles.fileName}>
+                    {video.filename}
+                  </Typography>
+                </Box>
               </SwiperSlide>
             ))}
           </Swiper>
+
           <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
             <DialogTitle>
               {selectedVideo?.filename ?? "Video Player"}
@@ -138,6 +113,7 @@ const Gallery = () => {
                 <>
                   <video
                     controls
+                    autoPlay
                     style={{
                       width: "100%",
                       maxHeight: "70vh",
@@ -153,12 +129,9 @@ const Gallery = () => {
                         selectedVideo.createdAt
                       ).toLocaleString()}`}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                    >{`File size: ${formatBytesToMB(
-                      selectedVideo.fileSize
-                    )}`}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {`File size: ${formatBytesToMB(selectedVideo.fileSize)}`}
+                    </Typography>
                   </Box>
                 </>
               )}
