@@ -19,7 +19,7 @@ export function usePreventNavigation(shouldBlock: boolean) {
     const originalPush = router.push;
 
     const interceptPush = (url: string) => {
-      if (url === pathname) return; // Skip if navigating to same page
+      if (url === pathname) return;
 
       const confirmed = confirm(
         "Leaving this page will interrupt your uploads. Do you want to leave anyway?"

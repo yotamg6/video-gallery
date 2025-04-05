@@ -8,7 +8,13 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ["3hiot6pk7tt7guzu.public.blob.vercel-storage.com"], // TODO: should be remotePatterns instead?
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "3hiot6pk7tt7guzu.public.blob.vercel-storage.com",
+        pathname: "**",
+      },
+    ],
   },
 };
 

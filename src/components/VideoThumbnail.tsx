@@ -9,6 +9,7 @@ import styles from "@/styles/gallery.module.css";
 import { VideoRecord } from "@/types/video";
 import MessageCard from "./MessageCard";
 import { formatBytesToMB } from "@/lib/utils/format";
+import { MEDIA_STYLE } from "@/lib/utils/constants";
 
 interface VideoThumbnailProps {
   video: VideoRecord;
@@ -30,7 +31,6 @@ const VideoThumbnail = ({
     setIsPlaying(false);
   };
 
-  // Stop playback if this slide is not active.
   useEffect(() => {
     if (isPlaying && activeSlide !== slideIndex) {
       setShowPlayer(false);
@@ -53,14 +53,6 @@ const VideoThumbnail = ({
     );
   }
 
-  // Common media style to ensure consistent dimensions
-  const mediaStyle = {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover" as const,
-    display: "block",
-  };
-
   return (
     <Box
       className={styles.videoCard}
@@ -69,10 +61,9 @@ const VideoThumbnail = ({
         flexDirection: "column",
         alignItems: "center",
         width: "100%",
-        maxWidth: 640, // Increased from 480 to 640
+        maxWidth: 640,
       }}
     >
-      {/* Top: File name */}
       <Typography
         className={styles.fileName}
         sx={{
@@ -84,18 +75,16 @@ const VideoThumbnail = ({
         {video.filename}
       </Typography>
 
-      {/* Middle: Video container */}
       <Box
         className={styles.videoContainer}
         sx={{
           position: "relative",
           borderRadius: "8px",
           overflow: "hidden",
-          // Fixed aspect ratio container (16:9)
           width: "100%",
-          maxWidth: 640, // Increased from 480 to 640
+          maxWidth: 640,
           height: 0,
-          paddingBottom: "56.25%", // Maintains 16:9 aspect ratio
+          paddingBottom: "56.25%",
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         }}
         onMouseEnter={() => setShowPlayer(true)}
@@ -103,7 +92,6 @@ const VideoThumbnail = ({
           if (!isPlaying) setShowPlayer(false);
         }}
       >
-        {/* Thumbnail image */}
         <Box
           sx={{
             position: "absolute",
@@ -118,13 +106,14 @@ const VideoThumbnail = ({
             src={video.thumbnailUrl}
             alt={video.filename}
             fill
+            sizes="(max-width: 640px) 100vw, 640px"
+            priority
             className={styles.thumbnail}
-            style={mediaStyle}
+            style={MEDIA_STYLE}
             onError={() => setHasError(true)}
           />
         </Box>
 
-        {/* Video Player */}
         <Box
           sx={{
             position: "absolute",
@@ -139,7 +128,7 @@ const VideoThumbnail = ({
             onPlay={() => setIsPlaying(true)}
             controls
             ref={videoRef}
-            style={mediaStyle}
+            style={MEDIA_STYLE}
             onEnded={handleVideoEnd}
             onError={() => setHasError(true)}
           >
@@ -148,14 +137,13 @@ const VideoThumbnail = ({
         </Box>
       </Box>
 
-      {/* Bottom: Upload details */}
       <Box
         mt={3}
         display="flex"
         justifyContent="space-between"
         sx={{
           width: "100%",
-          maxWidth: 640, // Increased from 480 to 640
+          maxWidth: 640,
           padding: "0 4px",
           color: "text.secondary",
         }}

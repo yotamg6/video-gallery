@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { BLOB_STORAGE_LIMIT, NEON_STORAGE_LIMIT } from "@/lib/utils/constants";
 
-// Check total file size stored in blob (via metadata in the DB)
 export const checkBlobStorage = async () => {
   const result = await prisma.video.aggregate({
     _sum: { fileSize: true },
@@ -20,7 +19,6 @@ export const checkBlobStorage = async () => {
   };
 };
 
-// Check total Neon DB size using pg_database_size()
 export const checkNeonStorage = async () => {
   const [{ size }] = await prisma.$queryRawUnsafe<{ size: number }[]>(
     `SELECT pg_database_size(current_database()) AS size`

@@ -36,14 +36,14 @@ export const generateThumbnail = async (
     console.error("Thumbnail generation failed:", err);
     return {
       thumbnailUrl: "",
-      status: "processing", //TODO: should be "failed instead? or implement a retry logic?"
+      status: "processing",
     };
   }
 };
 
-import { Video } from "@/types/video";
+import { VideoRecord } from "@/types/video";
 
-export const fetchVideos = async (): Promise<Video[]> => {
+export const fetchVideos = async (): Promise<VideoRecord[]> => {
   const res = await fetch("/api/videos");
   if (!res.ok) throw new Error("Failed to fetch videos");
   return res.json();

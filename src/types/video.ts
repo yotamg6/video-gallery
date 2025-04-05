@@ -2,16 +2,22 @@
 
 export type UploadStatus = 0 | 1 | 2 | 3 | 4;
 
-export interface UploadResult {
-  //TODO: should all this be optional;
-  filename?: string;
-  uploadId?: string;
-  videoUrl?: string;
-  thumbnailUrl?: string;
-  status?: number;
-  error?: boolean;
-  message?: string;
-}
+export type UploadResult =
+  | {
+      filename: string;
+      uploadId: string;
+      videoUrl: string;
+      thumbnailUrl: string;
+      status: number;
+      error?: false;
+      message?: string;
+    }
+  | {
+      filename: string;
+      uploadId: string;
+      error: true;
+      message: string;
+    };
 
 export type VideoWithId = {
   id: string;
@@ -37,3 +43,5 @@ export interface VideoRecord {
   createdAt: string;
   fileSize: number;
 }
+
+export type Sizes = "small" | "medium" | "large";

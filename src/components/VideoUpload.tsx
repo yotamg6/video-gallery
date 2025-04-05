@@ -37,7 +37,6 @@ const VideoUpload = () => {
   const [uploadStatuses, setUploadStatuses] = useState<
     Record<string, UploadStatus | null>
   >({});
-  const [uploadStarted, setUploadStarted] = useState(false); //TODO: check this
   const [showResults, setShowResults] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -60,7 +59,6 @@ const VideoUpload = () => {
 
   const handleConfirmUpload = async () => {
     setShowConfirmation(false);
-    setUploadStarted(true);
     await handleUpload();
   };
 

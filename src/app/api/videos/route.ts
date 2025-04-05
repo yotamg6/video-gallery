@@ -60,7 +60,7 @@ export const POST = async (req: NextRequest) => {
         } catch (error) {
           console.error("Upload error:", error);
           await setUploadStatus(uploadId, 0);
-          return { uploadId, error: true, message: "Upload failed" };
+          return { uploadId, filename, error: true, message: "Upload failed" };
         }
       })
     );
@@ -71,6 +71,7 @@ export const POST = async (req: NextRequest) => {
     );
     return Response.json(response);
   } catch (error) {
+    console.log("error", error);
     return respondWithError();
   }
 };
@@ -78,7 +79,7 @@ export const POST = async (req: NextRequest) => {
 export const GET = async () => {
   try {
     const videos = await getAllVideos();
-    return NextResponse.json(videos); //TODO: should this reponse by next also be applied to the other api functions?
+    return NextResponse.json(videos);
   } catch (error) {
     console.error("Error fetching videos:", error);
     return new NextResponse("Failed to fetch videos", { status: 500 });

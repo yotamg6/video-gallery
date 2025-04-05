@@ -37,7 +37,6 @@ const RootLayout = ({ children }: RootLayoutProps) => {
               width: "100%",
             }}
           >
-            {/* Background layer */}
             <Box
               sx={{
                 position: "fixed",

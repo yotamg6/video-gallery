@@ -44,19 +44,17 @@ const MessageWithCTA = ({
               mb={1}
             >
               {ctaFirstText}{" "}
-              <Link href={ctaLinkHref}>
-                <Typography
-                  component="span"
-                  sx={{
-                    color: "#004d40",
-                    fontWeight: 600,
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                    "&:hover": { color: "#00332e" },
-                  }}
-                >
-                  {targetComponentName}
-                </Typography>
+              <Link
+                href={ctaLinkHref}
+                sx={{
+                  color: "#004d40",
+                  fontWeight: 600,
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  "&:hover": { color: "#00332e" },
+                }}
+              >
+                {targetComponentName}
               </Link>{" "}
               {ctaSecondText}
             </Typography>

@@ -1,9 +1,8 @@
 "use client";
 
 import { RefObject, useRef } from "react";
-import { Button, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import UploadIcon from "@mui/icons-material/Publish";
 
 import { VideoWithId } from "@/types/video";
 import Loader from "./Loader";
@@ -25,12 +24,6 @@ const FilePicker = ({
   handleFilePickerClick,
 }: FilePickerProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // const handleClick = () => {
-  //   if (!uploading && fileInputRef.current) {
-  //     fileInputRef.current.click();
-  //   }
-  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []).map((file) => ({
@@ -67,7 +60,11 @@ const FilePicker = ({
           },
         }}
       >
-        {uploading ? <Loader /> : <CloudUploadIcon fontSize="inherit" />}
+        {uploading ? (
+          <Loader size="large" />
+        ) : (
+          <CloudUploadIcon fontSize="inherit" />
+        )}
       </IconButton>
     </>
   );

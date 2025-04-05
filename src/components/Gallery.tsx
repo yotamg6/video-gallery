@@ -1,20 +1,16 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { fetchVideos } from "@/lib/api/videos";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import "swiper/css";
 import "swiper/css/navigation";
 import styles from "@/styles/gallery.module.css";
-import { VideoRecord } from "@/types/video";
 import { Oswald } from "next/font/google";
 import MessageWithCTA from "./MessageWithCTA";
 import MessageCard from "./MessageCard";
-import { formatBytesToMB } from "@/lib/utils/format";
 import LoaderWithMessage from "./LoaderWithMessage";
 import VideoThumbnail from "./VideoThumbnail";
 
@@ -24,8 +20,6 @@ const oswald = Oswald({
 });
 
 const Gallery = () => {
-  const [open, setOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<VideoRecord | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
 
   const {
@@ -36,11 +30,6 @@ const Gallery = () => {
     queryKey: ["videos"],
     queryFn: fetchVideos,
   });
-
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedVideo(null);
-  };
 
   return (
     <div>

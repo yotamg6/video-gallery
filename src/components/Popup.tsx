@@ -7,7 +7,6 @@ import {
   DialogActions,
   Button,
   Typography,
-  Box,
 } from "@mui/material";
 import { VideoWithId } from "@/types/video";
 import { Dispatch, SetStateAction } from "react";

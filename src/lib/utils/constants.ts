@@ -1,3 +1,5 @@
+import { Sizes } from "@/types/video";
+
 export const LAMBDA_THUMBNAIL_URL =
   "https://27morko762a4xsitl5nddiaoqu0uwxgc.lambda-url.us-east-1.on.aws/";
 export const STATUS_PREFIX = "upload-status:";
@@ -36,4 +38,17 @@ export const STYLES_BY_SEVERITY = {
     border: "2px solid #fb8c00",
     color: "#e65100",
   },
+};
+
+export const LOADER_SIZES: Record<Sizes, number> = {
+  small: 20,
+  medium: 35,
+  large: 50,
+};
+
+export const MEDIA_STYLE = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover" as const,
+  display: "block",
 };

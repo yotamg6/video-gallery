@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { OrderBy, VideoUpload } from "@/types/video";
 
-//TODO: add try acatch to all functions?
-
 export const saveVideoMetadata = async ({
   filename,
   videoUrl,
