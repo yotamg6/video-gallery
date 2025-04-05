@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Video Gallery App
+
+A full-stack video gallery web application where users can upload videos, automatically generate thumbnails, and view them in a styled gallery carousel.
+
+Built with Next.js App Router, Prisma, React Query, AWS Lambda, Vercel Blob, and Neon Postgres.
+
+---
+
+## Features
+
+- Upload videos (supports multiple files)
+- Automatic thumbnail generation using AWS Lambda with ffmpeg
+- Display thumbnails in a responsive Swiper carousel
+- View uploaded videos in a modal player
+- Tracks file size and total DB usage, blocks uploads when exceeded
+- Reusable UI components for loading, messages, and error handling
+- Smart polling and upload progress via Redis
+- Styled with Material UI and a clean green-accent theme
+
+---
+
+## Tech Stack
+
+| Frontend             | Backend               | Infrastructure         |
+| -------------------- | --------------------- | ---------------------- |
+| Next.js (App Router) | Prisma ORM            | Vercel Blob Storage    |
+| React Query          | Neon Postgres         | AWS Lambda             |
+| Material UI          | Redis (upload status) | Swiper.js for carousel |
+
+---
+
+## Project Structure
+
+# Video Gallery App
+
+A full-stack video gallery web application where users can upload videos, automatically generate thumbnails, and view them in a styled gallery carousel.
+
+Built with Next.js App Router, Prisma, React Query, AWS Lambda, Vercel Blob, and Neon Postgres.
+
+---
+
+## Features
+
+- Upload videos (supports multiple files)
+- Automatic thumbnail generation using AWS Lambda with ffmpeg
+- Display thumbnails in a responsive carousel
+- View uploaded videos in a modal player
+- Tracks file size and total DB usage; blocks uploads when storage is exceeded
+- Reusable UI components for loading, messages, and error handling
+- Smart polling and upload progress tracking via Redis
+- Styled with Material UI and a clean green-accent theme
+
+---
+
+## Tech Stack
+
+- **Frontend:** Next.js (App Router), React Query, Material UI, Swiper.js
+- **Backend:** Prisma ORM, Neon Postgres, Redis, AWS Lambda
+- **Storage/Infrastructure:** Vercel Blob Storage
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
 
-```bash
+Clone the repository and install the required packages:
+
+git clone https://github.com/your-username/video-gallery.git
+cd video-gallery
+npm install
+
+### 2. Configure Environment Variables
+
+Create a .env.local file in the root of the project with the following variables:
+
+DATABASE_URL=your_neon_postgres_url
+REDIS_URL=your_redis_url
+VERCEL_BLOB_READ_WRITE_TOKEN=your_blob_token
+LAMBDA_THUMBNAIL_ENDPOINT=your_lambda_url
+
+Replace the placeholder values with your actual configuration.
+
+### 3. Start the App
+
+Run the development server with:
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser to see the app in action.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Storage Limits
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The Neon database enforces a strict 0.5GB limit using file size tracking.
 
-## Learn More
+Uploads are automatically blocked if the projected total storage would exceed this limit.
 
-To learn more about Next.js, take a look at the following resources:
+Storage usage is calculated and validated both on the client-side (before upload) and server-side.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Live Demo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The live demo of the app is found on:
+https://video-gallery-silk.vercel.app
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Written by Yotam Gaton

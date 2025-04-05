@@ -6,6 +6,10 @@ import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 
 export const config = {
+  api: {
+    bodyParser: false,
+    responseLimit: false,
+  },
   runtime: "nodejs",
 };
 
