@@ -1,14 +1,14 @@
 {
   "functions": {
-    "api/videos/*.ts": {
+    "app/api/videos/route.ts": {
       "memory": 1024,
       "maxDuration": 30
     },
-    "api/status/*.ts": {
+    "app/api/status/route.ts": {
       "memory": 1024,
       "maxDuration": 30
     },
-    "api/db/**/*.ts": {
+    "app/api/db/storage-status/route.ts": {
       "memory": 1024,
       "maxDuration": 30
     }
