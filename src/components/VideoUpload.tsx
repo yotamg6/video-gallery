@@ -17,15 +17,12 @@ import {
 } from "@mui/material";
 import usePolling from "@/app/hooks/usePolling";
 import { fetchUploadStatuses } from "@/app/api/videos/fetchUploadStatuses";
-import { MAX_UPLOAD_STATUS } from "@/lib/utils/constants";
+import {
+  MAX_UPLOAD_LIMIT_BYTES,
+  MAX_UPLOAD_STATUS,
+} from "@/lib/utils/constants";
 import { Oswald } from "next/font/google";
 import { usePreventNavigation } from "@/app/hooks/usePreventNavigation";
-
-declare global {
-  interface Window {
-    __UPLOAD_IN_PROGRESS__?: boolean;
-  }
-}
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -77,33 +74,44 @@ const VideoUpload = () => {
   };
 
   const handleUpload = async () => {
-    //Function to customHook
+    //TODO: Function to customHook
     if (!videos.length) return;
+    setUploading(true);
 
     const totalSelectedSize = videos.reduce(
       (sum, video) => sum + video.file.size,
       0
     );
 
+    if (totalSelectedSize > MAX_UPLOAD_LIMIT_BYTES) {
+      setSnackbarMessage(
+        "Total file size exceeds limit of 100MB. Please reduce your selection and try again"
+      );
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      setVideos([]);
+      return;
+    }
+
     try {
-      const res = await fetch("/api/db/neon-storage");
-      const { canUpload, totalUsed, limit } = await res.json();
+      const res = await fetch("/api/db/storage-status");
+      const { blob, neon } = await res.json();
 
-      const projectedTotal = totalUsed + totalSelectedSize;
+      const projectedTotal = blob.totalUsed + totalSelectedSize;
 
-      if (!canUpload || projectedTotal > limit) {
+      if (!blob.canUpload || !neon.canUpload || projectedTotal > blob.limit) {
         setSnackbarMessage(
           "Upload blocked: Total file size exceeds your storage limit."
         );
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
+        setVideos([]);
         return;
       }
     } catch (err) {
       console.error("Storage check failed", err);
     }
     setShowProgressBar(true);
-    setUploading(true);
 
     const formData = new FormData();
     videos.forEach(({ id, file }) => formData.append("videos", file, id));

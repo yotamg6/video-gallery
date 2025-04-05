@@ -11,7 +11,7 @@ export function usePreventNavigation(shouldBlock: boolean) {
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      e.returnValue = ""; // Show native leave warning
+      e.returnValue = ""; // Might be necessary to show native leave warning
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -21,19 +21,19 @@ export function usePreventNavigation(shouldBlock: boolean) {
     const interceptPush = (url: string) => {
       if (url === pathname) return; // Skip if navigating to same page
 
-      const confirmed = confirm("Uploads are in progress. Leave this page?");
+      const confirmed = confirm(
+        "Leaving this page will interrupt your uploads. Do you want to leave anyway?"
+      );
       if (confirmed) {
         window.removeEventListener("beforeunload", handleBeforeUnload);
         originalPush(url);
       }
     };
 
-    // @ts-ignore
     router.push = interceptPush;
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // @ts-ignore
       router.push = originalPush;
     };
   }, [shouldBlock, router, pathname]);
