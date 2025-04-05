@@ -20,6 +20,7 @@ const usePolling = ({ callback, delay }: UsePollingProps): void => {
       const id = setInterval(tick, delay);
       return () => clearInterval(id);
     }
+    return undefined;
   }, [delay]);
 };
 
