@@ -37,11 +37,6 @@ const Gallery = () => {
     queryFn: fetchVideos,
   });
 
-  const handleOpenDialog = (video: VideoRecord) => {
-    setSelectedVideo(video);
-    setOpen(true);
-  };
-
   const handleClose = () => {
     setOpen(false);
     setSelectedVideo(null);
@@ -80,63 +75,13 @@ const Gallery = () => {
                 <Box display="flex" flexDirection="column" alignItems="center">
                   <VideoThumbnail
                     video={video}
-                    openDialog={handleOpenDialog}
                     activeSlide={activeSlide}
                     slideIndex={index}
                   />
-                  <Typography className={styles.fileName}>
-                    {video.filename}
-                  </Typography>
                 </Box>
               </SwiperSlide>
             ))}
           </Swiper>
-
-          <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-            <DialogTitle>
-              {selectedVideo?.filename ?? "Video Player"}
-              <IconButton
-                aria-label="close"
-                onClick={handleClose}
-                sx={{
-                  position: "absolute",
-                  right: 8,
-                  top: 8,
-                  color: (theme) => theme.palette.grey[500],
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent>
-              {selectedVideo && (
-                <>
-                  <video
-                    controls
-                    autoPlay
-                    style={{
-                      width: "100%",
-                      maxHeight: "70vh",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <source src={selectedVideo.videoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                  <Box mt={2} display="flex" justifyContent="space-between">
-                    <Typography variant="body2" color="textSecondary">
-                      {`Uploaded on: ${new Date(
-                        selectedVideo.createdAt
-                      ).toLocaleString()}`}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {`File size: ${formatBytesToMB(selectedVideo.fileSize)}`}
-                    </Typography>
-                  </Box>
-                </>
-              )}
-            </DialogContent>
-          </Dialog>
         </div>
       )}
     </div>
