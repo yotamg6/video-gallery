@@ -9,39 +9,7 @@ Built with Next.js App Router, Prisma, React Query, AWS Lambda, Vercel Blob, and
 ## Features
 
 - Upload videos (supports multiple files)
-- Automatic thumbnail generation using AWS Lambda with ffmpeg
-- Display thumbnails in a responsive Swiper carousel
-- View uploaded videos in a modal player
-- Tracks file size and total DB usage, blocks uploads when exceeded
-- Reusable UI components for loading, messages, and error handling
-- Smart polling and upload progress via Redis
-- Styled with Material UI and a clean green-accent theme
-
----
-
-## Tech Stack
-
-| Frontend             | Backend               | Infrastructure         |
-| -------------------- | --------------------- | ---------------------- |
-| Next.js (App Router) | Prisma ORM            | Vercel Blob Storage    |
-| React Query          | Neon Postgres         | AWS Lambda             |
-| Material UI          | Redis (upload status) | Swiper.js for carousel |
-
----
-
-## Project Structure
-
-# Video Gallery App
-
-A full-stack video gallery web application where users can upload videos, automatically generate thumbnails, and view them in a styled gallery carousel.
-
-Built with Next.js App Router, Prisma, React Query, AWS Lambda, Vercel Blob, and Neon Postgres.
-
----
-
-## Features
-
-- Upload videos (supports multiple files)
+- Videos are split into 2MB chunks to avoid large payloads and handle upload limits
 - Automatic thumbnail generation using AWS Lambda with ffmpeg
 - Display thumbnails in a responsive carousel
 - View uploaded videos in a modal player
@@ -55,10 +23,40 @@ Built with Next.js App Router, Prisma, React Query, AWS Lambda, Vercel Blob, and
 ## Tech Stack
 
 - **Frontend:** Next.js (App Router), React Query, Material UI, Swiper.js
-- **Backend:** Prisma ORM, Neon Postgres, Redis, AWS Lambda
+- **Backend:** Prisma ORM, Neon Postgres, Redis - Upstash, AWS Lambda
 - **Storage/Infrastructure:** Vercel Blob Storage
 
----
+## Project Structure
+
+video-gallery/
+├── app/
+│ ├── api/
+│ │ ├── db/
+│ │ │ └── storage-status/
+│ │ ├── status/
+│ │ └── videos/
+│ │ ├── create-session/
+│ │ ├── upload-chunk/
+│ │ └── complete-upload/
+│ ├── components/
+│ │ ├── FilePicker.tsx
+│ │ ├── Popup.tsx
+│ │ ├── ResultsSection.tsx
+│ │ ├── VideoUpload.tsx
+│ │ └── ...
+│ └── hooks/
+│ ├── usePolling.ts
+│ └── useVideoUploader.ts
+├── lib/
+│ ├── api/
+│ ├── db/
+│ └── utils/
+├── styles/
+│ └── uploader.module.css
+├── public/
+├── prisma/
+├── vercel.json
+└── README.md
 
 ## Getting Started
 
@@ -101,4 +99,4 @@ Storage usage is calculated and validated both on the client-side (before upload
 The live demo of the app is found on:
 https://video-gallery-silk.vercel.app
 
-Written by Yotam Gaton
+Built by Yotam Gaton
