@@ -1,4 +1,3 @@
-import { UploadStatus } from "@/types/video";
 import axios from "axios";
 
 interface FetchUploadStatusesProps {
@@ -7,16 +6,14 @@ interface FetchUploadStatusesProps {
 
 export const fetchUploadStatuses = async ({
   videoIds,
-}: FetchUploadStatusesProps): Promise<Record<string, UploadStatus | null>> => {
+}: FetchUploadStatusesProps): Promise<Record<string, number | null>> => {
   try {
     const query = videoIds
       .map((id) => `id=${encodeURIComponent(id)}`)
       .join("&");
     const url = `/api/status?${query}`;
 
-
     const response = await axios.get(url);
-
 
     return response.data;
   } catch (error) {

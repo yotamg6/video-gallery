@@ -9,14 +9,13 @@ import {
   SxProps,
   Theme,
 } from "@mui/material";
-import { JSX } from "react";
 
 interface ItemListProps<T> {
   title: string;
   items: T[];
   getKey: (item: T) => string;
   getLabel: (item: T) => string;
-  getStateDisplay?: (item: T) => JSX.Element | "Failed" | undefined;
+  getStateDisplay?: (item: T) => React.ReactNode;
   styles?: {
     wrapper?: SxProps<Theme>;
     title?: SxProps<Theme>;

@@ -3,7 +3,7 @@ import { Sizes } from "@/types/video";
 export const LAMBDA_THUMBNAIL_URL =
   "https://27morko762a4xsitl5nddiaoqu0uwxgc.lambda-url.us-east-1.on.aws/";
 export const STATUS_PREFIX = "upload-status:";
-export const MAX_UPLOAD_STATUS = 4;
+export const CHUNK_SIZE = 2 * 1024 * 1024; //2MB
 //size limit in bytes
 export const NEON_STORAGE_LIMIT = BigInt(524_288_000);
 export const BLOB_STORAGE_LIMIT = 262_144_000;

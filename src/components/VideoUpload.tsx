@@ -1,8 +1,7 @@
 "use client";
 
-import { RefObject, useState } from "react";
-import axios from "axios";
-import { UploadResult, UploadStatus, VideoWithId } from "@/types/video";
+import { useMemo } from "react";
+import { VideoWithId } from "@/types/video";
 import styles from "@/styles/uploader.module.css";
 import Popup from "./Popup";
 import FilePicker from "./FilePicker";
@@ -15,14 +14,8 @@ import {
   Snackbar,
   Typography,
 } from "@mui/material";
-import usePolling from "@/app/hooks/usePolling";
-import { fetchUploadStatuses } from "@/app/api/videos/fetchUploadStatuses";
-import {
-  MAX_UPLOAD_LIMIT_BYTES,
-  MAX_UPLOAD_STATUS,
-} from "@/lib/utils/constants";
 import { Oswald } from "next/font/google";
-import { usePreventNavigation } from "@/app/hooks/usePreventNavigation";
+import { useVideoUploader } from "@/app/hooks/useVideoUploader";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -30,162 +23,63 @@ const oswald = Oswald({
 });
 
 const VideoUpload = () => {
-  const [videos, setVideos] = useState<VideoWithId[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [results, setResults] = useState<UploadResult[]>([]);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [uploadStatuses, setUploadStatuses] = useState<
-    Record<string, UploadStatus | null>
-  >({});
-  const [showResults, setShowResults] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "error"
-  );
-  const [showProgressBar, setShowProgressBar] = useState(false);
+  const {
+    videos,
+    setVideos,
+    uploading,
+    results,
+    setShowConfirmation,
+    showConfirmation,
+    setSnackbarOpen,
+    snackbarOpen,
+    snackbarMessage,
+    snackbarSeverity,
+    showProgressBar,
+    showResults,
+    handleResultsClose,
+    handleCancelClick,
+    handleConfirmUpload,
+    handleFilePickerClick,
+    progressMap,
+  } = useVideoUploader();
 
-  usePreventNavigation(uploading);
-
-  const handleResultsClose = () => {
-    setResults([]);
-    setShowResults(false);
-  };
-
-  const handleCancelClick = () => {
-    setVideos([]);
-    setShowConfirmation(false);
-  };
-
-  const handleConfirmUpload = async () => {
-    setShowConfirmation(false);
-    await handleUpload();
-  };
-
-  const handleFilePickerClick = (
-    fileInputRef: RefObject<HTMLInputElement | null>
-  ) => {
-    setShowResults(false);
-    if (!uploading && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleUpload = async () => {
-    //TODO: Function to customHook
-    if (!videos.length) return;
-    setUploading(true);
-
-    const totalSelectedSize = videos.reduce(
-      (sum, video) => sum + video.file.size,
-      0
-    );
-
-    if (totalSelectedSize > MAX_UPLOAD_LIMIT_BYTES) {
-      setSnackbarMessage(
-        "Total file size exceeds limit of 100MB. Please reduce your selection and try again"
-      );
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      setVideos([]);
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/db/storage-status");
-      const { blob, neon } = await res.json();
-
-      const projectedTotal = blob.totalUsed + totalSelectedSize;
-
-      if (!blob.canUpload || !neon.canUpload || projectedTotal > blob.limit) {
-        setSnackbarMessage(
-          "Upload blocked: Total file size exceeds your storage limit."
+  const stateDisplayMap = useMemo(() => {
+    const map: Record<string, React.ReactNode> = {};
+    for (const video of videos) {
+      const progress = progressMap[video.id];
+      if (progress === -1) {
+        map[video.id] = (
+          <Typography color="error" fontWeight={500}>
+            Failed
+          </Typography>
         );
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
-        setVideos([]);
-        return;
+      } else if (progress === undefined) {
+        map[video.id] = (
+          <Typography color="textSecondary" fontWeight={500}>
+            Waiting
+          </Typography>
+        );
+      } else {
+        map[video.id] = (
+          <Box sx={{ minWidth: 150 }}>
+            <LinearProgress
+              variant="determinate"
+              value={progress}
+              sx={{
+                height: 8,
+                borderRadius: 5,
+                backgroundColor: "#eee",
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#00796b",
+                },
+              }}
+            />
+          </Box>
+        );
       }
-    } catch (err) {
-      console.error("Storage check failed", err);
     }
-    setShowProgressBar(true);
-
-    const formData = new FormData();
-    videos.forEach(({ id, file }) => formData.append("videos", file, id));
-    formData.append(
-      "metadata",
-      JSON.stringify(
-        videos.map(({ id, file }) => ({
-          id,
-          filename: file.name,
-        }))
-      )
-    );
-
-    try {
-      const res = await axios.post("/api/videos", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      setResults(res.data);
-      setShowResults(true);
-      setSnackbarMessage("Videos uploaded successfully!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-    } catch (err) {
-      console.error("Upload failed", err);
-      setSnackbarMessage("Upload failed. Please try again.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-    } finally {
-      setUploading(false);
-      setVideos([]);
-    }
-  };
-
-  usePolling({
-    callback: () => {
-      const videoIds = videos.map((video) => video.id);
-      if (videoIds.length > 0) {
-        fetchUploadStatuses({ videoIds }).then(setUploadStatuses);
-      }
-    },
-    delay: 5000,
-    dependencies: [videos],
-  });
-
-  const getStateDisplay = (video: VideoWithId) => {
-    const rawStatus = uploadStatuses[video.id];
-    const status: UploadStatus = typeof rawStatus === "number" ? rawStatus : 1;
-
-    if (status === 0) {
-      return (
-        <Typography color="error" fontWeight={500}>
-          Failed
-        </Typography>
-      );
-    }
-
-    const progress = Math.round((status / MAX_UPLOAD_STATUS) * 100);
-
-    return (
-      <Box sx={{ minWidth: 150 }}>
-        <LinearProgress
-          variant="determinate"
-          value={progress}
-          sx={{
-            height: 8,
-            borderRadius: 5,
-            backgroundColor: "#eee",
-            "& .MuiLinearProgress-bar": {
-              backgroundColor: "#00796b",
-            },
-          }}
-        />
-      </Box>
-    );
-  };
+    return map;
+  }, [progressMap, videos]);
 
   return (
     <div className={styles.uploadContainer}>
@@ -206,7 +100,7 @@ const VideoUpload = () => {
           items={videos}
           getKey={(video) => video.id}
           getLabel={(video) => video.file.name}
-          getStateDisplay={getStateDisplay}
+          getStateDisplay={(video) => stateDisplayMap[video.id]}
           styles={{
             wrapper: { mt: 4 },
             title: { fontWeight: 600, color: "#004d40" },
